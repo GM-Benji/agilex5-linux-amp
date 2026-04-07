@@ -1,0 +1,5 @@
+
+# Załadowanie Linuksa (To standardowe komendy startowe Agilexa)
+fatload mmc 0:1 ${loadaddr} Image
+fatload mmc 0:1 ${fdt_addr} socfpga_agilex5_de25_nano.dtb
+booti ${loadaddr} - ${fdt_addr}

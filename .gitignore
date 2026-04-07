@@ -1,0 +1,22 @@
+# Skompilowane Device Tree
+*.dtb
+*.tmp
+
+# Skompilowane skrypty U-Boot
+*.scr
+
+# Pliki wynikowe kompilacji modułów jądra (Kbuild)
+*.o
+*.ko
+*.mod
+*.mod.c
+*.mod.o
+.*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+*.a
+
+# Pliki tymczasowe edytorów (Vim, Nano itp.)
+*~
+*.swp
