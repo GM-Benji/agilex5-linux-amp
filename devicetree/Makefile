@@ -1,9 +1,4 @@
-KDIR := /home/benji/rtubuntuAgilex/linux-socfpga
-INCLUDE_DTS := $(KDIR)/arch/arm64/boot/dts/intel
-INCLUDE_INC := $(KDIR)/include
-CURRENT_DIR := $(PWD)
-
-# Nazwa pliku dts (bez rozszerzenia)
+CURRENT_DIR := $(CURDIR)
 TARGET := socfpga_agilex5_de25_nano
 
 all: $(TARGET).dtb

@@ -1,3 +1,10 @@
+
+export KDIR := $(CURDIR)/linux-source
+
+
+export INCLUDE_DTS := $(KDIR)/arch/arm64/boot/dts/intel
+export INCLUDE_INC := $(KDIR)/include
+
 SUBDIRS := devicetree linux-driver boot
 
 .PHONY: all clean $(SUBDIRS)
