@@ -25,18 +25,26 @@ cd agilex5-linux-amp
 *(If you already cloned it without the flag, run `git submodule update --init --recursive` inside the folder).*
 
 ##  Build Instructions
-
 ### 1. Build the Kernel First
-Before building the AMP tools (driver, dtb, etc.), you must compile the Linux kernel inside the submodule. The top-level Makefile depends on the compiled kernel headers.
+Before building the AMP tools (driver, dtb, etc.), you must compile the Linux kernel inside the submodule. 
+
+**IMPORTANT: Cross-Compilation Note**
+If you are building on an x86_64 machine for the Agilex 5 (ARM64), you must export the cross-compilation variables in your terminal session before running any `make` commands:
 
 ```bash
 cd linux-source
-# Load the configuration (replace with your specific config if needed)
-make socfpga_defconfig  
-# Compile the kernel, modules, and device trees
+
+# 1. Setup environment for cross-compilation
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-
+
+# 2. Load the default configuration 
+# Note: Use 'defconfig' for ARM64 instead of 'socfpga_defconfig'
+make defconfig  
+
+# 3. Compile the kernel and components
 make -j$(nproc) Image modules dtbs
 cd ..
-```
 
 ### 2. Build the AMP Components
 Once the kernel is built, return to the root directory of this repository and run:
