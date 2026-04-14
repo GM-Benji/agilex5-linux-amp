@@ -1,3 +1,6 @@
 [submodule "devicetree/linux-source"]
 	path = devicetree/linux-source
 	url = git@github.com:GM-Benji/linux-socfpga.git
+[submodule "linux-source"]
+	path = linux-source
+	url = git@github.com:GM-Benji/linux-socfpga.git
