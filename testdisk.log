@@ -1,0 +1,120 @@
+
+
+Tue Apr 14 13:24:47 2026
+Command line: TestDisk
+
+TestDisk 7.2, Data Recovery Utility, February 2024
+Christophe GRENIER <grenier@cgsecurity.org>
+https://www.cgsecurity.org
+OS: Linux, kernel 6.17.0-20-generic (#20-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar 13 20:07:29 UTC 2026) x86_64
+Compiler: GCC 14.2
+ext2fs lib: 1.47.2, ntfs lib: libntfs-3g, reiserfs lib: none, ewf lib: none, curses lib: ncurses 6.5
+/dev/sda: LBA, HPA, LBA48, DCO support
+/dev/sda: size       937703088 sectors
+/dev/sda: user_max   937703088 sectors
+/dev/sda: native_max 937703088 sectors
+/dev/sda: dco        937703088 sectors
+Warning: can't get size for Disk /dev/mapper/control - 0 B - 0 sectors, sector size=512
+Warning: can't get size for Disk /dev/loop20 - 0 B - 0 sectors, sector size=512
+Hard disk list
+Disk /dev/sda - 480 GB / 447 GiB - CHS 58369 255 63, sector size=512 - MSI S270 480GB, FW:61.5
+Disk /dev/sdb - 31 GB / 29 GiB - CHS 29819 64 32, sector size=512 - SD/MMC/MS PRO, FW:1.00
+Disk /dev/loop0 - 4096 B - 8 sectors (RO), sector size=512
+Disk /dev/loop1 - 77 MB / 73 MiB - 151456 sectors (RO), sector size=512
+Disk /dev/loop10 - 270 KB / 264 KiB - 528 sectors (RO), sector size=512
+Disk /dev/loop11 - 96 MB / 91 MiB - 187776 sectors (RO), sector size=512
+Disk /dev/loop12 - 557 MB / 531 MiB - 1088256 sectors (RO), sector size=512
+Disk /dev/loop13 - 1571 MB / 1498 MiB - 3069288 sectors (RO), sector size=512
+Disk /dev/loop14 - 389 MB / 371 MiB - 760760 sectors (RO), sector size=512
+Disk /dev/loop15 - 414 MB / 394 MiB - 808920 sectors (RO), sector size=512
+Disk /dev/loop16 - 50 MB / 48 MiB - 98480 sectors (RO), sector size=512
+Disk /dev/loop17 - 50 MB / 48 MiB - 99056 sectors (RO), sector size=512
+Disk /dev/loop18 - 238 MB / 227 MiB - 466016 sectors (RO), sector size=512
+Disk /dev/loop19 - 238 MB / 227 MiB - 466024 sectors (RO), sector size=512
+Disk /dev/loop2 - 77 MB / 73 MiB - 151512 sectors (RO), sector size=512
+Disk /dev/loop3 - 70 MB / 66 MiB - 136904 sectors (RO), sector size=512
+Disk /dev/loop4 - 65 MB / 62 MiB - 127296 sectors (RO), sector size=512
+Disk /dev/loop5 - 266 MB / 254 MiB - 521368 sectors (RO), sector size=512
+Disk /dev/loop6 - 267 MB / 254 MiB - 522136 sectors (RO), sector size=512
+Disk /dev/loop7 - 541 MB / 516 MiB - 1057184 sectors (RO), sector size=512
+Disk /dev/loop8 - 635 MB / 606 MiB - 1241248 sectors (RO), sector size=512
+Disk /dev/loop9 - 13 MB / 13 MiB - 26968 sectors (RO), sector size=512
+Disk /dev/nvme0n1 - 512 GB / 476 GiB - CHS 488386 64 32, sector size=512 - Micron 2210S NVMe 512GB, S/N:22123657FD4C
+
+Partition table type (auto): Intel
+Disk /dev/sdb - 31 GB / 29 GiB - SD/MMC/MS PRO
+Partition table type: Intel
+
+Analyse Disk /dev/sdb - 31 GB / 29 GiB - CHS 29819 64 32
+Geometry from i386 MBR: head=95 sector=57
+BAD_RS LBA=2048 1056
+FAT32 at 1/0/1
+Info: size boot_sector 614400, partition 614401
+FAT1 : 32-631
+FAT2 : 632-1231
+start_rootdir : 1232 root cluster : 2
+Data : 1232-614399
+sectors : 614400
+cluster_size : 8
+no_of_cluster : 76646 (2 - 76647)
+fat_length 600 calculated 599
+set_FAT_info: name from BS used
+BAD_RS LBA=618496 917504
+check_part_i386 failed for partition type 83
+get_geometry_from_list_part_aux head=64 nbr=3
+get_geometry_from_list_part_aux head=8 nbr=3
+get_geometry_from_list_part_aux head=16 nbr=3
+get_geometry_from_list_part_aux head=32 nbr=3
+get_geometry_from_list_part_aux head=64 nbr=3
+get_geometry_from_list_part_aux head=128 nbr=1
+Current partition structure:
+ 1 P FAT32                    1   0  1   301   0  1     614401 [NO NAME]
+
+Warning: Bad starting sector (CHS and LBA don't match)
+No ext2, JFS, Reiser, cramfs or XFS marker
+ 2 P Linux                  302   0  1 29818  63 32   60450816
+ 2 P Linux                  302   0  1 29818  63 32   60450816
+
+Bad relative sector.
+No partition is bootable
+
+search_part()
+Disk /dev/sdb - 31 GB / 29 GiB - CHS 29819 64 32
+FAT32 at 1/0/1
+FAT1 : 32-631
+FAT2 : 632-1231
+start_rootdir : 1232 root cluster : 2
+Data : 1232-614399
+sectors : 614400
+cluster_size : 8
+no_of_cluster : 76646 (2 - 76647)
+fat_length 600 calculated 599
+set_FAT_info: name from BS used
+
+FAT32 at 1/0/1
+FAT: cluster=2(0x2), pos=3280
+     FAT32                    1   0  1   300  63 32     614400 [NO NAME]
+     FAT32, blocksize=4096, 314 MB / 300 MiB
+get_geometry_from_list_part_aux head=64 nbr=2
+get_geometry_from_list_part_aux head=8 nbr=2
+get_geometry_from_list_part_aux head=16 nbr=2
+get_geometry_from_list_part_aux head=32 nbr=2
+get_geometry_from_list_part_aux head=64 nbr=2
+
+Results
+   * FAT32                    1   0  1   300  63 32     614400 [NO NAME]
+     FAT32, blocksize=4096, 314 MB / 300 MiB
+
+Hint for advanced users: dmsetup may be used if you prefer to avoid rewriting the partition table for the moment:
+echo "0 614400 linear /dev/sdb 2048" | dmsetup create test0
+SIGINT detected! PhotoRec has been killed.
+
+interface_write()
+ 1 * FAT32                    1   0  1   300  63 32     614400 [NO NAME]
+simulate write!
+
+write_mbr_i386: starting...
+write_all_log_i386: starting...
+No extended partition
+
+TestDisk exited normally.

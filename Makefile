@@ -1,3 +1,6 @@
+# comment if you are using ARM CPU
+export ARCH ?= arm64
+export CROSS_COMPILE ?= aarch64-linux-gnu-
 
 export KDIR := $(CURDIR)/linux-source
 
