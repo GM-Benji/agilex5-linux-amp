@@ -5,6 +5,7 @@
 #include <linux/io.h>
 #include <linux/arm-smccc.h>
 #include <linux/delay.h>
+#include <linux/kernel.h>
 
 // --- DEFINICJE STRUKTURY PAMIĘCI (Musi pasować do Bare Metalu) ---
 #define RING_BUFFER_SIZE 1024
@@ -19,6 +20,11 @@ typedef struct {
     RingBuffer linux_to_bm;
     RingBuffer bm_to_linux;
 } SharedMemoryMap;
+// -----------------------------------------------------------------
+
+// --- DEFINICJE DLA MOSTKA FPGA ---
+#define LWH2F_BASE_ADDR 0x20000000  // Adres odczytany z tabeli dla LWHPS2FPGA_memory
+#define LWH2F_MAP_SIZE  0x1000      // Mapujemy jedną stronę (4KB) pamięci dla oszczędności zasobów
 // -----------------------------------------------------------------
 
 static struct kobject *bm_kobj;
@@ -77,8 +83,8 @@ static ssize_t cmd_store(struct kobject *kobj, struct kobj_attribute *attr, cons
     
     if (!map) return -ENOMEM;
     
-  	 head = readl(&map->linux_to_bm.head) % RING_BUFFER_SIZE;
-     tail = readl(&map->linux_to_bm.tail) % RING_BUFFER_SIZE;
+    head = readl(&map->linux_to_bm.head) % RING_BUFFER_SIZE;
+    tail = readl(&map->linux_to_bm.tail) % RING_BUFFER_SIZE;
     
     // Wpisanie danych znak po znaku z barierami pamięci (DMB)
     for (i = 0; i < count; i++) {
@@ -96,13 +102,49 @@ static ssize_t cmd_store(struct kobject *kobj, struct kobj_attribute *attr, cons
 }
 static struct kobj_attribute cmd_attr = __ATTR_WO(cmd);
 
+// 5. Zapis danych bezposrednio na mostek LWH2F (do FPGA)
+static ssize_t fpga_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) {
+    void __iomem *fpga_map;
+    unsigned int offset, value;
+
+    // Parsowanie ciągu wejściowego: oczekujemy dwóch wartości "offset wartosc"
+    if (sscanf(buf, "%i %i", &offset, &value) != 2) {
+        pr_err("Nieprawidlowy format. Uzyj: echo \"<offset> <wartosc>\" > fpga\n");
+        return -EINVAL;
+    }
+
+    // Zabezpieczenie przed wyjściem poza zmapowaną przestrzeń 4KB
+    if (offset >= LWH2F_MAP_SIZE) {
+        pr_err("Przekroczono limit mapowania (offset: 0x%X, maks: 0x%X)\n", offset, LWH2F_MAP_SIZE - 4);
+        return -EINVAL;
+    }
+
+    // Standardowe ioremap (zamiast _wc) ponieważ to są rejestry sprzętowe, a nie RAM
+    fpga_map = ioremap(LWH2F_BASE_ADDR, LWH2F_MAP_SIZE);
+    if (!fpga_map) {
+        pr_err("Blad ioremap dla mostka FPGA (0x%X)\n", LWH2F_BASE_ADDR);
+        return -ENOMEM;
+    }
+
+    // Zapisz wartość do FPGA
+    writel(value, fpga_map + offset);
+    wmb(); // Wymuś wykonanie zapisu na szynie
+    
+    pr_info("Wyslano na mostek LWH2F: Zapisano 0x%08X pod adres 0x%08X (offset 0x%X)\n", 
+            value, LWH2F_BASE_ADDR + offset, offset);
+
+    iounmap(fpga_map);
+    return count;
+}
+static struct kobj_attribute fpga_attr = __ATTR_WO(fpga);
+
+
 static int __init bm_init(void) {
     int error;
     
     bm_kobj = kobject_create_and_add("baremetal", kernel_kobj);
     if (!bm_kobj) return -ENOMEM;
     
-    // Profesjonalne rejestrowanie atrybutów z obsługą błędów (usuwa warningi kompilatora)
     error = sysfs_create_file(bm_kobj, &fw_attr.attr);
     if (error) pr_warn("Nie udalo sie utworzyc pliku fw\n");
     
@@ -114,8 +156,12 @@ static int __init bm_init(void) {
     
     error = sysfs_create_file(bm_kobj, &cmd_attr.attr);
     if (error) pr_warn("Nie udalo sie utworzyc pliku cmd\n");
+
+    // Rejestracja nowego interfejsu dla mostka FPGA
+    error = sysfs_create_file(bm_kobj, &fpga_attr.attr);
+    if (error) pr_warn("Nie udalo sie utworzyc pliku fpga\n");
     
-    pr_info("=== System wstrzykiwania Bare Metal GOTOWY ===\n");
+    pr_info("=== System wstrzykiwania Bare Metal & FPGA LWH2F GOTOWY ===\n");
     return 0;
 }
 
