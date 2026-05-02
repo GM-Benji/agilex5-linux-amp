@@ -100,35 +100,45 @@ static ssize_t cmd_store(struct kobject *kobj, struct kobj_attribute *attr, cons
     iounmap(map);
     return count;
 }
-static struct kobj_attribute cmd_attr = __ATTR_WO(cmd);
+static struct kobj_attribute cmd_attr = __ATTR_WO(cmd); // <--- PRZYWRÓCONA LINIJA
 
-// 5. Zapis danych bezposrednio na mostek LWH2F (do FPGA)
+// 5. Zapis i odczyt danych bezposrednio na mostek LWH2F (do FPGA)
+static ssize_t fpga_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf) {
+    void __iomem *fpga_map;
+    uint32_t val;
+    
+    fpga_map = ioremap(LWH2F_BASE_ADDR, LWH2F_MAP_SIZE);
+    if (!fpga_map) return -ENOMEM;
+    
+    val = readl(fpga_map + 0x0); 
+    
+    iounmap(fpga_map);
+    
+    return sprintf(buf, "Wartosc pod offsetem 0x0: 0x%08X\n", val);
+}
+
 static ssize_t fpga_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) {
     void __iomem *fpga_map;
     unsigned int offset, value;
 
-    // Parsowanie ciągu wejściowego: oczekujemy dwóch wartości "offset wartosc"
     if (sscanf(buf, "%i %i", &offset, &value) != 2) {
         pr_err("Nieprawidlowy format. Uzyj: echo \"<offset> <wartosc>\" > fpga\n");
         return -EINVAL;
     }
 
-    // Zabezpieczenie przed wyjściem poza zmapowaną przestrzeń 4KB
     if (offset >= LWH2F_MAP_SIZE) {
         pr_err("Przekroczono limit mapowania (offset: 0x%X, maks: 0x%X)\n", offset, LWH2F_MAP_SIZE - 4);
         return -EINVAL;
     }
 
-    // Standardowe ioremap (zamiast _wc) ponieważ to są rejestry sprzętowe, a nie RAM
     fpga_map = ioremap(LWH2F_BASE_ADDR, LWH2F_MAP_SIZE);
     if (!fpga_map) {
         pr_err("Blad ioremap dla mostka FPGA (0x%X)\n", LWH2F_BASE_ADDR);
         return -ENOMEM;
     }
 
-    // Zapisz wartość do FPGA
     writel(value, fpga_map + offset);
-    wmb(); // Wymuś wykonanie zapisu na szynie
+    wmb(); 
     
     pr_info("Wyslano na mostek LWH2F: Zapisano 0x%08X pod adres 0x%08X (offset 0x%X)\n", 
             value, LWH2F_BASE_ADDR + offset, offset);
@@ -136,7 +146,9 @@ static ssize_t fpga_store(struct kobject *kobj, struct kobj_attribute *attr, con
     iounmap(fpga_map);
     return count;
 }
-static struct kobj_attribute fpga_attr = __ATTR_WO(fpga);
+
+// Rejestracja atrybutu 
+static struct kobj_attribute fpga_attr = __ATTR(fpga, 0660, fpga_show, fpga_store);
 
 
 static int __init bm_init(void) {
@@ -157,7 +169,6 @@ static int __init bm_init(void) {
     error = sysfs_create_file(bm_kobj, &cmd_attr.attr);
     if (error) pr_warn("Nie udalo sie utworzyc pliku cmd\n");
 
-    // Rejestracja nowego interfejsu dla mostka FPGA
     error = sysfs_create_file(bm_kobj, &fpga_attr.attr);
     if (error) pr_warn("Nie udalo sie utworzyc pliku fpga\n");
     
