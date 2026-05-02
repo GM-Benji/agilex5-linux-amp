@@ -26,7 +26,7 @@ typedef struct {
 #define LWH2F_BASE_ADDR 0x20000000  // Adres odczytany z tabeli dla LWHPS2FPGA_memory
 #define LWH2F_MAP_SIZE  0x1000      // Mapujemy jedną stronę (4KB) pamięci dla oszczędności zasobów
 // -----------------------------------------------------------------
-
+static unsigned int last_fpga_offset = 0;
 static struct kobject *bm_kobj;
 
 // 1. Zapisywanie pliku .bin do RAM-u
@@ -110,11 +110,11 @@ static ssize_t fpga_show(struct kobject *kobj, struct kobj_attribute *attr, char
     fpga_map = ioremap(LWH2F_BASE_ADDR, LWH2F_MAP_SIZE);
     if (!fpga_map) return -ENOMEM;
     
-    val = readl(fpga_map + 0x0); 
+    val = readl(fpga_map + last_fpga_offset);
     
     iounmap(fpga_map);
     
-    return sprintf(buf, "Wartosc pod offsetem 0x0: 0x%08X\n", val);
+    return sprintf(buf, "Wartosc pod offsetem 0x%X: 0x%08X\n", last_fpga_offset, val);
 }
 
 static ssize_t fpga_store(struct kobject *kobj, struct kobj_attribute *attr, const char *buf, size_t count) {
@@ -125,12 +125,12 @@ static ssize_t fpga_store(struct kobject *kobj, struct kobj_attribute *attr, con
         pr_err("Nieprawidlowy format. Uzyj: echo \"<offset> <wartosc>\" > fpga\n");
         return -EINVAL;
     }
-
+    
     if (offset >= LWH2F_MAP_SIZE) {
         pr_err("Przekroczono limit mapowania (offset: 0x%X, maks: 0x%X)\n", offset, LWH2F_MAP_SIZE - 4);
         return -EINVAL;
     }
-
+    last_fpga_offset = offset;
     fpga_map = ioremap(LWH2F_BASE_ADDR, LWH2F_MAP_SIZE);
     if (!fpga_map) {
         pr_err("Blad ioremap dla mostka FPGA (0x%X)\n", LWH2F_BASE_ADDR);
