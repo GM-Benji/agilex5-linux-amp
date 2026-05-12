@@ -1,12 +1,16 @@
+# 0. ZAMKNIĘCIE MOSTKÓW (Krytyczne przy nadpisywaniu QSPI!)
+bridge disable
+
 # 1. Wczytanie bitstreamu z karty do RAM
 fatload mmc 0:1 ${loadaddr} bitstream.rbf
 
 # 2. Wgranie bitstreamu na matrycę FPGA
 fpga load 0 ${loadaddr} ${filesize}
 
-# 3. OTWARCIE MOSTKÓW 
+# 3. OTWARCIE MOSTKÓW
 bridge enable
-# Załadowanie Linuksa 
+
+# 4. Załadowanie Linuksa
 fatload mmc 0:1 ${loadaddr} Image
 fatload mmc 0:1 ${fdt_addr} socfpga_agilex5_de25_nano.dtb
 booti ${loadaddr} - ${fdt_addr}
