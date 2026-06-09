@@ -4,3 +4,9 @@
 [submodule "linux-source"]
 	path = linux-source
 	url = git@github.com:GM-Benji/linux-socfpga.git
+[submodule "atf-source"]
+	path = atf-source
+	url = https://github.com/altera-opensource/arm-trusted-firmware.git
+[submodule "u-boot-source"]
+	path = u-boot-source
+	url = https://github.com/altera-opensource/u-boot-socfpga.git
