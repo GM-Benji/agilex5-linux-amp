@@ -123,6 +123,29 @@ sudo sh -c 'echo "HELLO_AGILEX" > /sys/kernel/baremetal/cmd'
 **Read the response/logs from the bare-metal core:**
 ```bash
 cat /sys/kernel/baremetal/log
+
+
+
+
+## 🛠 Bootloader Compilation (U-Boot & ATF)
+
+This repository includes submodules for ARM Trusted Firmware and U-Boot, customized to ingest the FPGA hardware handoff file (`hps_bootloader_handoff.bin`).
+
+1. Place your updated FPGA handoff binary in the `hardware/` directory:
+   `cp /path/to/hps_bootloader_handoff.bin hardware/`
+
+2. Run the bootloader build command from the root directory:
+   ```bash
+   make uboot
+
+    Outputs:
+
+        u-boot-source/spl/u-boot-spl-dtb.hex: Use this file in Quartus Programming File Generator (along with your .sof) to generate the .jic file for the QSPI flash (Phase 1).
+
+        u-boot-source/u-boot.itb: Place this file in the FAT32 boot partition of your MicroSD card. This replaces the default bootloader and includes your specific hardware configurations.
+
+
+By doing this, you have completely centralized your board support package. Everything from the bare-metal payload bridge down to the lowest-level register initialization is now tracked and version-controlled in a single place.
 ```
 ```
 

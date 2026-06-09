@@ -20,3 +20,4 @@ Module.symvers
 # Pliki tymczasowe edytorów (Vim, Nano itp.)
 *~
 *.swp
+.DS_Store
